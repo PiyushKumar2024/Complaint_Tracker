@@ -25,8 +25,9 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
 
-// 404 Handler
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
