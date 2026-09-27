@@ -33,5 +33,7 @@ desktop.ini
 coverage/
 
 # Misc
-pdf_content.txt
+*.pdf
+*.txt
+*.doc
 *.docx
