@@ -83,7 +83,20 @@ const login = async (req, res) => {
   }
 };
 
+// Get current logged-in user profile
+const getMe = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   register,
-  login
+  login,
+  getMe
 };
