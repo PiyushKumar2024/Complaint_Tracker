@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// Basic JWT token generator helper
 const generateToken = (id, role) => {
   return jwt.sign(
     { id, role },
@@ -10,7 +9,6 @@ const generateToken = (id, role) => {
   );
 };
 
-// Register User
 const register = async (req, res) => {
   try {
     const { name, email, password, role, department } = req.body;
@@ -48,7 +46,6 @@ const register = async (req, res) => {
   }
 };
 
-// Login User
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -83,7 +80,6 @@ const login = async (req, res) => {
   }
 };
 
-// Get current logged-in user profile
 const getMe = async (req, res) => {
   try {
     res.status(200).json({
@@ -95,8 +91,69 @@ const getMe = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+  try {
+    const { name, department, phone } = req.body;
+    const updates = {};
+
+    if (name) updates.name = name;
+    if (department) updates.department = department;
+    if (phone !== undefined) updates.phone = phone;
+
+    const user = await User.findByIdAndUpdate(req.user._id, updates, {
+      new: true,
+      runValidators: true
+    }).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated',
+      user
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current password and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'New password must be at least 6 characters' });
+    }
+
+    const user = await User.findById(req.user._id);
+    const isMatch = await user.matchPassword(currentPassword);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'Password changed successfully'
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   register,
   login,
-  getMe
+  getMe,
+  updateProfile,
+  changePassword
 };

@@ -12,7 +12,6 @@ const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secretkey');
 
-      // Attach user to req (excluding password)
       req.user = await User.findById(decoded.id).select('-password');
 
       if (!req.user) {
@@ -30,4 +29,13 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ message: `Access denied. Required role(s): ${roles.join(', ')}` });
+    }
+    next();
+  };
+};
+
+module.exports = { protect, authorize };
