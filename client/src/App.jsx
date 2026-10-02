@@ -7,6 +7,7 @@ import StudentDashboard from './pages/StudentDashboard';
 import FileComplaint from './pages/FileComplaint';
 import AdminDashboard from './pages/AdminDashboard';
 import StaffDashboard from './pages/StaffDashboard';
+import AllComplaints from './pages/AllComplaints';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
 
             {/* Admin Routes */}
             <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/complaints" element={<ProtectedRoute allowedRoles={['admin']}><AllComplaints /></ProtectedRoute>} />
             
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
