@@ -5,15 +5,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import StudentDashboard from './pages/StudentDashboard';
 import FileComplaint from './pages/FileComplaint';
+import AdminDashboard from './pages/AdminDashboard';
+import StaffDashboard from './pages/StaffDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
-
-// Temporary placeholder for dashboards
-const Home = () => (
-  <div style={{ padding: '2rem', textAlign: 'center' }}>
-    <h2>Welcome to the Complaint Tracker</h2>
-    <p>Please select an option from the menu.</p>
-  </div>
-);
 
 function App() {
   return (
@@ -31,9 +25,11 @@ function App() {
             <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
             <Route path="/file-complaint" element={<ProtectedRoute><FileComplaint /></ProtectedRoute>} />
             
-            {/* Staff/Admin Routes */}
-            <Route path="/staff" element={<ProtectedRoute allowedRoles={['staff', 'admin']}><Home /></ProtectedRoute>} />
-            <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><Home /></ProtectedRoute>} />
+            {/* Staff Routes */}
+            <Route path="/staff" element={<ProtectedRoute allowedRoles={['staff', 'admin']}><StaffDashboard /></ProtectedRoute>} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
             
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />
@@ -45,3 +41,4 @@ function App() {
 }
 
 export default App;
+

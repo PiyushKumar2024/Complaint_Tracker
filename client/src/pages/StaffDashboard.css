@@ -1,0 +1,109 @@
+.staff-dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.staff-header {
+  margin-bottom: 2rem;
+}
+
+.staff-header h2 {
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.staff-header p {
+  color: #7f8c8d;
+}
+
+/* Quick Stats Row */
+.staff-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.staff-stat-item {
+  background: white;
+  border-radius: 12px;
+  padding: 1.25rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 3px solid transparent;
+  transition: transform 0.2s ease;
+}
+
+.staff-stat-item:hover {
+  transform: translateY(-2px);
+}
+
+.staff-stat-total { border-top-color: #6c5ce7; }
+.staff-stat-open { border-top-color: #e67e22; }
+.staff-stat-progress { border-top-color: #3498db; }
+.staff-stat-resolved { border-top-color: #2ecc71; }
+
+.staff-stat-num {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1;
+}
+
+.staff-stat-label {
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+}
+
+/* Tab count badge */
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.08);
+  color: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  margin-left: 0.4rem;
+  padding: 0 0.35rem;
+}
+
+.tab-btn.active .tab-count {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .staff-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
