@@ -3,6 +3,8 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import StudentDashboard from './pages/StudentDashboard';
+import FileComplaint from './pages/FileComplaint';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Temporary placeholder for dashboards
@@ -25,8 +27,9 @@ function App() {
             <Route path="/register" element={<Register />} />
 
             {/* Protected Routes (Everyone logged in) */}
-            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+            <Route path="/dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+            <Route path="/file-complaint" element={<ProtectedRoute><FileComplaint /></ProtectedRoute>} />
             
             {/* Staff/Admin Routes */}
             <Route path="/staff" element={<ProtectedRoute allowedRoles={['staff', 'admin']}><Home /></ProtectedRoute>} />
