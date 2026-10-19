@@ -11,7 +11,7 @@ const generateToken = (id, role) => {
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, role, department } = req.body;
+    const { name, email, password, department } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' });
@@ -26,7 +26,7 @@ const register = async (req, res) => {
       name,
       email,
       password,
-      role: role || 'student',
+      role: 'student',
       department: department || 'General'
     });
 

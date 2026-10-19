@@ -42,7 +42,7 @@ A full-stack **Complaint Management System** built with the **MERN stack** (Mong
   - Title & detailed description
   - Department selection (dynamically loaded from DB)
   - Category selection (populated based on chosen department)
-  - Priority level (Low / Medium / High / Critical)
+  - Priority level (Low / Medium / High / Urgent)
   - File attachments (up to 3 files — images, PDFs, documents; max 5 MB each)
 - **View My Complaints** — Students/faculty see only their own complaints.
 - **Complaint Details View** — Detailed page showing full complaint info, status badges, priority, department, filed-by info, attachments, location data, and timeline history.

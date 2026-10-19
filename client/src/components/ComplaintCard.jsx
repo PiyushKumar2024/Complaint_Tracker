@@ -13,7 +13,7 @@ const ComplaintCard = ({ complaint }) => {
   };
 
   const getPriorityBadge = (priority) => {
-    const isHigh = priority === 'High' || priority === 'Critical';
+    const isHigh = priority === 'High' || priority === 'Urgent';
     return (
       <span className={`priority-badge ${isHigh ? 'priority-high' : 'priority-normal'}`}>
         {priority}

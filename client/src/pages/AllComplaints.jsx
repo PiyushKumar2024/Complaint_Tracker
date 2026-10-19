@@ -79,7 +79,7 @@ const AllComplaints = () => {
 
   const getPriorityClass = (priority) => {
     switch (priority) {
-      case 'Critical': return 'priority-critical';
+      case 'Urgent': return 'priority-critical';
       case 'High': return 'priority-high';
       case 'Medium': return 'priority-medium';
       case 'Low': return 'priority-low';
@@ -143,7 +143,7 @@ const AllComplaints = () => {
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
             <option value="High">High</option>
-            <option value="Critical">Critical</option>
+            <option value="Urgent">Urgent</option>
           </select>
 
           {hasActiveFilters && (
