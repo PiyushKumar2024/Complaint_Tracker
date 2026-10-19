@@ -96,7 +96,7 @@ A full-stack **Complaint Management System** built with the **MERN stack** (Mong
 
 | Layer         | Technology                                                                 |
 |---------------|---------------------------------------------------------------------------|
-| **Frontend**  | React 19, React Router v7, Axios, Vite 8                                 |
+| **Frontend**  | React 19, React Router v7, Axios, Vite 8, Tailwind CSS 4                 |
 | **Backend**   | Node.js, Express.js 4                                                     |
 | **Database**  | MongoDB with Mongoose 8 ODM                                              |
 | **Auth**      | JSON Web Tokens (jsonwebtoken), bcryptjs                                  |
@@ -117,39 +117,36 @@ Complaint_Tracker/
 │   └── src/
 │       ├── main.jsx                 # React entry point
 │       ├── App.jsx                  # Root component with routing
-│       ├── index.css                # Global styles
+│       ├── index.css                # Tailwind CSS entry point and global base styles
 │       ├── context/
-│       │   └── AuthContext.jsx      # Auth state management (React Context)
+│       │   ├── AuthContext.jsx      # Auth state management (React Context)
+│       │   └── ToastContext.jsx     # Global success/error notifications
 │       ├── services/
 │       │   └── api.js               # Axios instance with JWT interceptor
 │       ├── components/
 │       │   ├── Navbar.jsx           # Navigation bar (role-aware)
-│       │   ├── Navbar.css
 │       │   ├── ProtectedRoute.jsx   # Route guard (auth + RBAC)
+│       │   ├── Footer.jsx           # Site footer
+│       │   ├── ErrorBoundary.jsx   # React render-error fallback
+│       │   ├── LoadingState.jsx     # Shared skeleton loading UI
+│       │   ├── StatusBadge.jsx      # Shared status badge
 │       │   ├── ComplaintCard.jsx     # Reusable complaint card
-│       │   ├── ComplaintCard.css
 │       │   ├── TimelineView.jsx     # Complaint timeline renderer
-│       │   ├── TimelineView.css
 │       │   ├── StatusUpdater.jsx    # Status transition UI (staff/admin)
-│       │   ├── StatusUpdater.css
-│       │   ├── AssignStaff.jsx      # Staff assignment dropdown (admin)
-│       │   └── AssignStaff.css
+│       │   └── AssignStaff.jsx      # Staff assignment dropdown (admin)
 │       ├── pages/
 │       │   ├── Login.jsx            # Login page
 │       │   ├── Register.jsx         # Registration page
-│       │   ├── Auth.css             # Shared auth page styles
+│       │   ├── LandingPage.jsx      # Public overview and registration CTA
+│       │   ├── NotFound.jsx         # Styled 404 page
+│       │   ├── AccountSettings.jsx  # Profile and password settings
+│       │   ├── UserManagement.jsx   # Admin user and role management
 │       │   ├── StudentDashboard.jsx # Student/citizen complaint list
-│       │   ├── StudentDashboard.css
 │       │   ├── FileComplaint.jsx    # File new complaint form
-│       │   ├── FileComplaint.css
 │       │   ├── ComplaintDetails.jsx # Detailed complaint view
-│       │   ├── ComplaintDetails.css
 │       │   ├── StaffDashboard.jsx   # Staff assigned complaints
-│       │   ├── StaffDashboard.css
 │       │   ├── AdminDashboard.jsx   # Admin overview panel
-│       │   ├── AdminDashboard.css
-│       │   ├── AllComplaints.jsx    # Admin: all complaints table
-│       │   └── AllComplaints.css
+│       │   └── AllComplaints.jsx    # Admin: all complaints table
 │       └── utils/                   # Client-side utilities (reserved)
 │
 ├── server/                          # Express Backend
@@ -248,6 +245,9 @@ NODE_ENV=development
 | `JWT_SECRET`  | Secret key for signing JWT tokens        | `supersecretjwtkey_change_in_production`        |
 | `CLIENT_URL`  | Frontend URL for CORS                    | `http://localhost:5173`                         |
 | `NODE_ENV`    | Environment mode                         | `development`                                   |
+
+The frontend defaults to `http://localhost:5000/api`. To use a different backend, set
+`VITE_API_URL` in `client/.env.local` to the backend API base URL, including `/api`.
 
 ---
 
@@ -368,6 +368,7 @@ Base URL: `http://localhost:5000/api`
 {
   name:       String (required, trimmed)
   email:      String (required, unique, lowercase)
+  phone:      String (optional)
   password:   String (required, min 6 chars, auto-hashed via bcrypt)
   role:       Enum ['student', 'faculty', 'staff', 'admin'] (default: 'student')
   department: String (default: 'General')
@@ -423,25 +424,33 @@ Base URL: `http://localhost:5000/api`
 
 | Page                | Route                | Access         | Description                                        |
 |---------------------|----------------------|----------------|----------------------------------------------------|
+| Landing Page        | `/`                  | Public         | Public overview, features, and registration CTA    |
 | Login               | `/login`             | Public         | Email/password login form                          |
 | Register            | `/register`          | Public         | New user registration form                         |
-| Student Dashboard   | `/` , `/dashboard`   | Authenticated  | User's own complaints with status-filter tabs      |
+| Student Dashboard   | `/dashboard`         | Authenticated  | User's complaints, filters, counts, and sorting    |
 | File Complaint      | `/file-complaint`    | Authenticated  | Multi-field complaint submission form              |
 | Complaint Details   | `/complaint/:id`     | Authenticated  | Full complaint details with timeline & sidebar     |
 | Staff Dashboard     | `/staff`             | Staff, Admin   | Complaints assigned to the logged-in staff member  |
 | Admin Dashboard     | `/admin`             | Admin only     | Stats cards, dept-wise table, recent complaints    |
 | All Complaints      | `/admin/complaints`  | Admin only     | Searchable/filterable table of all complaints      |
+| User Management     | `/admin/users`       | Admin only     | Review user accounts and update roles              |
+| Account Settings    | `/settings`          | Authenticated  | Update profile information and change password     |
+| Not Found           | `*`                  | Public         | Styled 404 page for unknown routes                 |
 
 ### Reusable Components
 
 | Component       | Purpose                                                    |
 |-----------------|------------------------------------------------------------|
 | `Navbar`        | Role-aware navigation with conditional links and logout    |
+| `Footer`        | Shared site footer                                         |
 | `ProtectedRoute`| Auth guard with optional role-based access restriction     |
 | `ComplaintCard`  | Card UI for complaint summary (used in dashboards)        |
+| `StatusBadge`   | Consistent status label and color                         |
 | `TimelineView`   | Vertical timeline renderer with status icons & connectors |
 | `StatusUpdater`  | Status transition buttons with comment field              |
 | `AssignStaff`    | Staff assignment dropdown with current assignee display   |
+| `LoadingState`  | Shared skeleton loading presentation                      |
+| `ErrorBoundary` | Fallback UI for unexpected rendering errors               |
 
 ---
 

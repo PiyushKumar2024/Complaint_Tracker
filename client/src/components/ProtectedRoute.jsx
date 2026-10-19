@@ -1,13 +1,14 @@
 import { useContext } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import LoadingState from './LoadingState';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useContext(AuthContext);
   const location = useLocation();
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <LoadingState label="Checking your session..." count={2} />;
   }
 
   if (!user) {

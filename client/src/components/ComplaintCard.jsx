@@ -1,70 +1,61 @@
 import { Link } from 'react-router-dom';
-import './ComplaintCard.css';
+import StatusBadge from './StatusBadge';
 
 const ComplaintCard = ({ complaint }) => {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Open': return '#e67e22';
-      case 'In Progress': return '#3498db';
-      case 'Resolved': return '#2ecc71';
-      case 'Closed': return '#7f8c8d';
-      default: return '#95a5a6';
-    }
-  };
-
   const getPriorityBadge = (priority) => {
     const isHigh = priority === 'High' || priority === 'Urgent';
     return (
-      <span className={`priority-badge ${isHigh ? 'priority-high' : 'priority-normal'}`}>
+      <span className={`rounded px-2 py-1 text-xs font-bold uppercase ${isHigh ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
         {priority}
       </span>
     );
   };
 
   return (
-    <div className="complaint-card">
-      <div className="card-header">
-        <h3 className="card-title">{complaint.title}</h3>
-        <span 
-          className="status-badge"
-          style={{ backgroundColor: getStatusColor(complaint.status) }}
-        >
-          {complaint.status}
-        </span>
+    <article className={`flex h-full flex-col rounded-xl border border-slate-100 border-l-4 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-lg ${complaint.status === 'Open' ? 'border-l-amber-500' : complaint.status === 'In Progress' ? 'border-l-sky-500' : complaint.status === 'Resolved' ? 'border-l-green-500' : 'border-l-slate-400'}`}>
+      <div className="mb-4 flex items-start justify-between gap-3 max-[480px]:flex-col">
+        <h3 className="m-0 break-words text-lg font-semibold text-ink-900">{complaint.title}</h3>
+        <StatusBadge status={complaint.status} />
       </div>
       
-      <div className="card-body">
-        <p className="card-desc">
+      <div className="flex-grow">
+        <p className="mb-6 text-sm leading-relaxed text-muted-500">
           {complaint.description.length > 100 
             ? `${complaint.description.substring(0, 100)}...` 
             : complaint.description}
         </p>
         
-        <div className="card-meta">
-          <div className="meta-item">
-            <span className="meta-label">Department:</span>
-            <span className="meta-value">{complaint.department?.name || 'N/A'}</span>
+        <div className="mb-6 grid grid-cols-2 gap-3">
+          <div className="flex flex-col text-sm">
+            <span className="text-xs font-medium text-slate-400">Department</span>
+            <span className="font-semibold text-ink-700">{complaint.department?.name || 'N/A'}</span>
           </div>
-          <div className="meta-item">
-            <span className="meta-label">Category:</span>
-            <span className="meta-value">{complaint.category}</span>
+          <div className="flex flex-col text-sm">
+            <span className="text-xs font-medium text-slate-400">Category</span>
+            <span className="font-semibold text-ink-700">{complaint.category}</span>
           </div>
-          <div className="meta-item">
-            <span className="meta-label">Filed On:</span>
-            <span className="meta-value">
+          {complaint.location?.city && (
+            <div className="flex flex-col text-sm">
+              <span className="text-xs font-medium text-slate-400">Location</span>
+              <span className="font-semibold text-ink-700">{complaint.location.city}</span>
+            </div>
+          )}
+          <div className="flex flex-col text-sm">
+            <span className="text-xs font-medium text-slate-400">Filed On</span>
+            <span className="font-semibold text-ink-700">
               {new Date(complaint.createdAt).toLocaleDateString()}
             </span>
           </div>
         </div>
       </div>
       
-      <div className="card-footer">
+      <div className="mt-auto flex items-center justify-between border-t border-slate-100 pt-4">
         {getPriorityBadge(complaint.priority)}
-        <Link to={`/complaint/${complaint._id}`} className="btn-view">
+        <Link to={`/complaint/${complaint._id}`} className="font-semibold text-brand-600 no-underline hover:text-brand-700 hover:underline">
           View Details
         </Link>
       </div>
-    </div>
+    </article>
   );
 };
 

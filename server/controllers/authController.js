@@ -11,20 +11,22 @@ const generateToken = (id, role) => {
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, department } = req.body;
+    const { name, email, password, phone, department } = req.body;
+    const normalizedEmail = String(email || '').trim().toLowerCase();
 
-    if (!name || !email || !password) {
+    if (!name || !normalizedEmail || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' });
     }
 
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+      return res.status(409).json({ message: 'User already exists with this email' });
     }
 
     const user = await User.create({
-      name,
-      email,
+      name: String(name).trim(),
+      email: normalizedEmail,
+      phone: phone ? String(phone).trim() : '',
       password,
       role: 'student',
       department: department || 'General'
@@ -36,13 +38,18 @@ const register = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         department: user.department
       },
       token: generateToken(user._id, user.role)
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error && error.code === 11000) {
+      return res.status(409).json({ message: 'An account with this email already exists' });
+    }
+
+    res.status(500).json({ message: error.message || 'Registration failed' });
   }
 };
 
@@ -70,6 +77,7 @@ const login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        phone: user.phone,
         role: user.role,
         department: user.department
       },

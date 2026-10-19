@@ -1,6 +1,27 @@
 const Complaint = require('../models/Complaint');
 const Department = require('../models/Department');
 
+const getDocumentId = (value) => {
+  if (!value) return null;
+  return (value._id || value).toString();
+};
+
+const isComplaintAccessibleByUser = (user, complaint) => {
+  if (!user || !complaint) return false;
+
+  if (user.role === 'admin') return true;
+
+  if (user.role === 'student' || user.role === 'faculty') {
+    return getDocumentId(complaint.filedBy) === user._id.toString();
+  }
+
+  if (user.role === 'staff') {
+    return getDocumentId(complaint.assignedTo) === user._id.toString();
+  }
+
+  return false;
+};
+
 const createComplaint = async (req, res) => {
   try {
     const { title, description, category, department, priority, location } = req.body;
@@ -52,6 +73,8 @@ const getComplaints = async (req, res) => {
 
     if (req.user.role === 'student' || req.user.role === 'faculty') {
       filter.filedBy = req.user._id;
+    } else if (req.user.role === 'staff') {
+      filter.assignedTo = req.user._id;
     }
 
     if (req.query.status) filter.status = req.query.status;
@@ -87,11 +110,12 @@ const getComplaintById = async (req, res) => {
       return res.status(404).json({ message: 'Complaint not found' });
     }
 
-    if (
-      (req.user.role === 'student' || req.user.role === 'faculty') &&
-      complaint.filedBy._id.toString() !== req.user._id.toString()
-    ) {
-      return res.status(403).json({ message: 'Access denied: You can only view your own complaints' });
+    if (!isComplaintAccessibleByUser(req.user, complaint)) {
+      if (req.user.role === 'student' || req.user.role === 'faculty') {
+        return res.status(403).json({ message: 'Access denied: You can only view your own complaints' });
+      }
+
+      return res.status(403).json({ message: 'Access denied: You can only view complaints assigned to you' });
     }
 
     res.status(200).json({
@@ -121,6 +145,10 @@ const updateComplaintStatus = async (req, res) => {
     const complaint = await Complaint.findById(req.params.id);
     if (!complaint) {
       return res.status(404).json({ message: 'Complaint not found' });
+    }
+
+    if (req.user.role === 'staff' && (!complaint.assignedTo || complaint.assignedTo.toString() !== req.user._id.toString())) {
+      return res.status(403).json({ message: 'Access denied: You can only update complaints assigned to you' });
     }
 
     const allowed = VALID_TRANSITIONS[complaint.status];
@@ -173,6 +201,10 @@ const assignComplaint = async (req, res) => {
     const staffUser = await User.findById(assignedTo);
     if (!staffUser) {
       return res.status(404).json({ message: 'Staff user not found' });
+    }
+
+    if (staffUser.role !== 'staff') {
+      return res.status(400).json({ message: 'Only staff users can be assigned to a complaint' });
     }
 
     complaint.assignedTo = assignedTo;

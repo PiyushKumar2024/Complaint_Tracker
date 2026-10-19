@@ -39,13 +39,24 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
+  const updateProfile = async (profileData) => {
+    const res = await api.put('/auth/profile', profileData);
+    setUser(res.data.user);
+    return res.data;
+  };
+
+  const changePassword = async (passwordData) => {
+    const res = await api.put('/auth/change-password', passwordData);
+    return res.data;
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, updateProfile, changePassword, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

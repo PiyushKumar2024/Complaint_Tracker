@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-import './AssignStaff.css';
 
 const AssignStaff = ({ complaintId, currentAssignee, onAssign }) => {
   const [staffList, setStaffList] = useState([]);
@@ -19,7 +18,7 @@ const AssignStaff = ({ complaintId, currentAssignee, onAssign }) => {
       const res = await api.get('/admin/users', { params: { role: 'staff' } });
       setStaffList(res.data.data);
     } catch (err) {
-      setError('Failed to load staff list');
+      setError(err.response?.data?.message || 'Failed to load staff list');
     } finally {
       setFetching(false);
     }
@@ -45,17 +44,18 @@ const AssignStaff = ({ complaintId, currentAssignee, onAssign }) => {
     }
   };
 
-  if (fetching) return <p className="assign-loading">Loading staff...</p>;
+  if (fetching) return <p className="text-sm text-muted-500">Loading staff...</p>;
 
   return (
-    <div className="assign-staff">
+    <div className="space-y-3">
       {currentAssignee && (
-        <p className="current-assignee">
+        <p className="text-sm text-muted-500">
           Currently: <strong>{currentAssignee.name}</strong>
         </p>
       )}
       <select
-        className="staff-select"
+        className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-ink-700 outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-100"
+        aria-label="Select staff member to assign"
         value={selectedStaff}
         onChange={(e) => setSelectedStaff(e.target.value)}
       >
@@ -67,14 +67,14 @@ const AssignStaff = ({ complaintId, currentAssignee, onAssign }) => {
         ))}
       </select>
       <button
-        className="btn-assign"
+        className="rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
         onClick={handleAssign}
         disabled={!selectedStaff || loading}
       >
         {loading ? 'Assigning...' : 'Assign'}
       </button>
-      {error && <p className="assign-error">{error}</p>}
-      {success && <p className="assign-success">{success}</p>}
+      {error && <p className="rounded-md bg-red-50 p-3 text-sm text-red-700" role="alert">{error}</p>}
+      {success && <p className="rounded-md bg-green-50 p-3 text-sm text-green-700" role="status">{success}</p>}
     </div>
   );
 };

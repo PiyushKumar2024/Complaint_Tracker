@@ -31,6 +31,12 @@ const validateRegister = [
     .bail()
     .isEmail().withMessage('Please provide a valid email')
     .normalizeEmail(),
+  body('phone')
+    .optional({ values: 'falsy' })
+    .isString().withMessage('Phone must be a string')
+    .bail()
+    .trim()
+    .isLength({ max: 25 }).withMessage('Phone must be at most 25 characters'),
   body('password')
     .exists().withMessage('Password is required')
     .bail()

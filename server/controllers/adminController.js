@@ -78,6 +78,10 @@ const getAllComplaints = async (req, res) => {
   try {
     const filter = {};
 
+    if (req.user.role === 'staff') {
+      filter.assignedTo = req.user._id;
+    }
+
     if (req.query.status) filter.status = req.query.status;
     if (req.query.category) filter.category = req.query.category;
     if (req.query.department) filter.department = req.query.department;

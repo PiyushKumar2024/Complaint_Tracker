@@ -1,8 +1,6 @@
-import './TimelineView.css';
-
 const TimelineView = ({ timeline }) => {
   if (!timeline || timeline.length === 0) {
-    return <p className="timeline-empty">No timeline entries yet.</p>;
+    return <p className="text-sm text-muted-500">No timeline entries yet.</p>;
   }
 
   const getStatusIcon = (status) => {
@@ -16,17 +14,19 @@ const TimelineView = ({ timeline }) => {
   };
 
   return (
-    <div className="timeline">
+    <div className="space-y-0">
       {timeline.map((entry, index) => (
-        <div key={index} className={`timeline-item ${index === timeline.length - 1 ? 'timeline-latest' : ''}`}>
-          <div className="timeline-line">
-            <span className="timeline-dot">{getStatusIcon(entry.status)}</span>
-            {index < timeline.length - 1 && <div className="timeline-connector"></div>}
+        <div key={index} className="flex gap-4">
+          <div className="flex w-7 shrink-0 flex-col items-center">
+            <span className={`grid size-7 place-items-center rounded-full text-sm ${index === timeline.length - 1 ? 'bg-brand-100 ring-4 ring-brand-50' : 'bg-slate-100'}`}>
+              {getStatusIcon(entry.status)}
+            </span>
+            {index < timeline.length - 1 && <div className="my-1 min-h-10 w-px flex-1 bg-slate-200" />}
           </div>
-          <div className="timeline-content">
-            <div className="timeline-header">
-              <span className="timeline-status">{entry.status}</span>
-              <span className="timeline-date">
+          <div className="mb-5 min-w-0 flex-1 pb-1">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="font-semibold text-ink-900">{entry.status}</span>
+              <span className="text-xs text-muted-500">
                 {new Date(entry.timestamp).toLocaleString('en-IN', {
                   day: 'numeric',
                   month: 'short',
@@ -37,10 +37,10 @@ const TimelineView = ({ timeline }) => {
               </span>
             </div>
             {entry.comment && (
-              <p className="timeline-comment">{entry.comment}</p>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-ink-700">{entry.comment}</p>
             )}
             {entry.updatedBy && (
-              <span className="timeline-user">
+              <span className="mt-2 block text-xs text-muted-500">
                 by {entry.updatedBy.name || 'System'} ({entry.updatedBy.role || ''})
               </span>
             )}
