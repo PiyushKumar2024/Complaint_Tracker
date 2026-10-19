@@ -93,7 +93,11 @@ const validateComplaint = [
   body('department')
     .exists().withMessage('Department is required')
     .bail()
-    .isMongoId().withMessage('Department must be a valid ID'),
+    .isString().withMessage('Department must be a valid ID or department code')
+    .bail()
+    .trim()
+    .matches(/^(?:[a-f\d]{24}|[A-Z\d_-]{1,10})$/i)
+    .withMessage('Department must be a valid ID or department code'),
   body('priority')
     .optional()
     .isIn(['Low', 'Medium', 'High', 'Urgent']).withMessage('Priority must be Low, Medium, High, or Urgent'),

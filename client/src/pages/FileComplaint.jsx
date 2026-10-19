@@ -3,8 +3,40 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import { useToast } from '../context/ToastContext';
 
+const departments = [
+  {
+    code: 'PWD',
+    name: 'Public Works',
+    categories: ['Roads', 'Bridges', 'Buildings', 'Potholes', 'Footpaths']
+  },
+  {
+    code: 'WS',
+    name: 'Water Supply & Sewage',
+    categories: ['Water Leakage', 'No Water Supply', 'Contaminated Water', 'Drainage Overflow', 'Sewage Blockage']
+  },
+  {
+    code: 'EB',
+    name: 'Electricity Board',
+    categories: ['Power Outage', 'Street Lights', 'Fallen Wire', 'Faulty Meter', 'Voltage Fluctuation']
+  },
+  {
+    code: 'HD',
+    name: 'Health & Sanitation',
+    categories: ['Garbage Accumulation', 'Dead Animals', 'Mosquito Breeding', 'Public Toilet Hygiene', 'Hospital Complaints']
+  },
+  {
+    code: 'TR',
+    name: 'Transport & Traffic',
+    categories: ['Broken Traffic Signal', 'Public Bus Delay', 'Illegal Parking', 'Auto/Taxi Overcharging']
+  },
+  {
+    code: 'MC',
+    name: 'Municipal Corporation',
+    categories: ['Encroachment', 'Illegal Construction', 'Park Maintenance', 'Stray Cattle/Dogs']
+  }
+];
+
 const FileComplaint = () => {
-  const [departments, setDepartments] = useState([]);
   const [selectedDept, setSelectedDept] = useState('');
   const [formData, setFormData] = useState({
     title: '',
@@ -18,26 +50,11 @@ const FileComplaint = () => {
   const [files, setFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [loadingDepartments, setLoadingDepartments] = useState(true);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
 
   const navigate = useNavigate();
   const { showToast } = useToast();
-
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        const res = await api.get('/departments');
-        setDepartments(res.data.data);
-      } catch (err) {
-        setError(err.response?.data?.message || 'Failed to load departments. Please refresh and try again.');
-      } finally {
-        setLoadingDepartments(false);
-      }
-    };
-    fetchDepartments();
-  }, []);
 
   useEffect(() => {
     const filePreviews = files.map((file) => ({
@@ -126,7 +143,7 @@ const FileComplaint = () => {
     }
   };
 
-  const activeDeptObj = departments.find(d => d._id === selectedDept);
+  const activeDeptObj = departments.find(department => department.code === selectedDept);
 
   return (
     <div className="mx-auto max-w-3xl p-4 py-8 sm:p-8">
@@ -161,17 +178,18 @@ const FileComplaint = () => {
                 id="complaint-department"
                 value={selectedDept} 
                 onChange={(e) => {
+                  const department = departments.find((item) => item.code === e.target.value);
                   setSelectedDept(e.target.value);
-                  setFormData((current) => ({ ...current, category: '' }));
+                  setFormData((current) => ({
+                    ...current,
+                    category: department?.categories.includes(current.category) ? current.category : ''
+                  }));
                 }}
-                disabled={loadingDepartments || departments.length === 0}
                 required
               >
-                <option value="">
-                  {loadingDepartments ? 'Loading departments...' : '-- Select Department --'}
-                </option>
-                {departments.map(dept => (
-                  <option key={dept._id} value={dept._id}>{dept.name}</option>
+                <option value="">-- Select Department --</option>
+                {departments.map(department => (
+                  <option key={department.code} value={department.code}>{department.name}</option>
                 ))}
               </select>
             </div>
@@ -185,12 +203,19 @@ const FileComplaint = () => {
                 value={formData.category}
                 onChange={handleInputChange}
                 required
-                disabled={!selectedDept}
               >
                 <option value="">-- Select Category --</option>
-                {activeDeptObj?.categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
+                {activeDeptObj
+                  ? activeDeptObj.categories.map((category) => (
+                    <option key={category} value={category}>{category}</option>
+                  ))
+                  : departments.map((department) => (
+                    <optgroup key={department.code} label={department.name}>
+                      {department.categories.map((category) => (
+                        <option key={category} value={category}>{category}</option>
+                      ))}
+                    </optgroup>
+                  ))}
               </select>
             </div>
           </div>
@@ -297,7 +322,7 @@ const FileComplaint = () => {
             <button type="button" onClick={() => navigate('/dashboard')} className="rounded-lg border border-slate-300 px-5 py-3 font-semibold text-ink-700 hover:bg-slate-50">
               Cancel
             </button>
-            <button type="submit" disabled={loading || loadingDepartments || departments.length === 0} className="rounded-lg bg-brand-500 px-5 py-3 font-semibold text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60">
+            <button type="submit" disabled={loading} className="rounded-lg bg-brand-500 px-5 py-3 font-semibold text-white hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60">
               {loading ? 'Submitting...' : 'Submit Complaint'}
             </button>
           </div>

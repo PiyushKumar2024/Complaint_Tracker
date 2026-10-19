@@ -30,7 +30,9 @@ const createComplaint = async (req, res) => {
       return res.status(400).json({ message: 'Title, description, category, and department are required' });
     }
 
-    const deptExists = await Department.findById(department);
+    const deptExists = /^[a-f\d]{24}$/i.test(department)
+      ? await Department.findById(department)
+      : await Department.findOne({ code: department.toUpperCase() });
     if (!deptExists) {
       return res.status(404).json({ message: 'Selected department does not exist' });
     }
@@ -46,7 +48,7 @@ const createComplaint = async (req, res) => {
       title,
       description,
       category,
-      department,
+      department: deptExists._id,
       priority: priority || 'Medium',
       location: location ? (typeof location === 'string' ? JSON.parse(location) : location) : {},
       filedBy: req.user._id,

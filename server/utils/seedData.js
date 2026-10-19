@@ -50,8 +50,13 @@ const seedDatabase = async () => {
     const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/complaint_tracker';
     await mongoose.connect(mongoUri);
 
-    await Department.deleteMany({});
-    await Department.insertMany(departments);
+    await Department.bulkWrite(departments.map((department) => ({
+      updateOne: {
+        filter: { code: department.code },
+        update: { $setOnInsert: department },
+        upsert: true
+      }
+    })));
 
     const adminEmail = 'admin@tracker.com';
     let admin = await User.findOne({ email: adminEmail });
