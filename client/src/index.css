@@ -24,7 +24,6 @@
     min-width: 320px;
     min-height: 100vh;
     @apply bg-slate-50 font-sans text-slate-800 antialiased;
-    overflow-wrap: anywhere;
   }
 
   button,
