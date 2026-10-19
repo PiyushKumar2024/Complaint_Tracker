@@ -1,0 +1,75 @@
+.timeline {
+  position: relative;
+}
+
+.timeline-empty {
+  color: #95a5a6;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 1rem;
+  min-height: 70px;
+}
+
+.timeline-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.timeline-dot {
+  font-size: 1rem;
+  z-index: 1;
+}
+
+.timeline-connector {
+  width: 2px;
+  flex: 1;
+  background: #e0e0e0;
+  margin-top: 4px;
+}
+
+.timeline-content {
+  flex: 1;
+  padding-bottom: 1.25rem;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.timeline-status {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.timeline-date {
+  font-size: 0.75rem;
+  color: #95a5a6;
+}
+
+.timeline-comment {
+  color: #4a5568;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin-bottom: 0.25rem;
+}
+
+.timeline-user {
+  font-size: 0.75rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.timeline-latest .timeline-content {
+  padding-bottom: 0;
+}

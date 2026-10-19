@@ -1,0 +1,81 @@
+.status-updater {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.status-comment {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.status-comment:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.status-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.btn-status {
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-status:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-status:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-status-in-progress {
+  background: #3498db;
+  color: white;
+}
+
+.btn-status-resolved {
+  background: #2ecc71;
+  color: white;
+}
+
+.btn-status-closed {
+  background: #7f8c8d;
+  color: white;
+}
+
+.status-note {
+  color: #95a5a6;
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+.status-error {
+  color: #e74c3c;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.status-success {
+  color: #2ecc71;
+  font-size: 0.8rem;
+  margin: 0;
+}
